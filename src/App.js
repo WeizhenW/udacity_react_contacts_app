@@ -1,38 +1,18 @@
 import React, { Component } from 'react';
 import ListContacts from './ListContacts';
-import * as ContactAPI from './utils/ContactsAPI';
+import CreateContact from './CreateContact';
+import { HashRouter as Router, Route } from 'react-router-dom';
 
 class App extends Component {
-  state = {
-    contacts: []
-  };
 
-  componentDidMount(){
-    ContactAPI.getAll().then(
-      (contacts) => {
-        this.setState({
-          contacts: contacts
-        })
-      }
-    )
-  };
-
-
-
-  onRemoveContact = (contact) => {
-
-    const newContactsList = this.state.contacts.filter(c => c.id !== contact.id);
-    this.setState({
-      contacts: newContactsList
-    });
-  }
   render() {
     return (
-      <div>
-        <ListContacts 
-          contacts = {this.state.contacts}
-          onRemoveContact = {this.onRemoveContact} />
-      </div>
+      <Router>
+        <div>
+          <Route path='/' exact component={ListContacts} />
+          <Route path='/create' component={CreateContact} />
+        </div>
+      </Router>
     );
   }
 }

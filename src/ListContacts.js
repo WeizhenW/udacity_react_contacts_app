@@ -1,9 +1,22 @@
 import React, { Component } from 'react';
+import { HashRouter as Router, Route, Link } from 'react-router-dom';
+import * as ContactAPI from './utils/ContactsAPI';
 
 class ListContacts extends Component {
     state = {
+        contacts: [],
         query: ''
     }
+
+    componentDidMount(){
+        ContactAPI.getAll().then(
+          (contacts) => {
+            this.setState({
+              contacts: contacts
+            })
+          }
+        )
+      };
 
     changeQueryString = (e) => {
         this.setState({
@@ -16,14 +29,22 @@ class ListContacts extends Component {
             query: ''
         })
     }
+
+    onRemoveContact = (contact) => {
+        const newContactsList = this.state.contacts.filter(c => c.id !== contact.id);
+        this.setState({
+          contacts: newContactsList
+        });
+      }
+
     render() {
         //destructure the props and state
-        const { contacts, onRemoveContact } = this.props;
-        const { query } = this.state;
+        // const { contacts, onRemoveContact } = this.props;
+        const { query, contacts } = this.state;
 
-        const showingContacts = query === '' 
-        ? contacts
-        : contacts.filter(contact => contact.name.toLowerCase().includes(query.toLowerCase()));
+        const showingContacts = query === ''
+            ? contacts
+            : contacts.filter(contact => contact.name.toLowerCase().includes(query.toLowerCase()));
 
         return (
             <div className='list-contacts'>
@@ -34,6 +55,13 @@ class ListContacts extends Component {
                         placeholder='search text'
                         value={query}
                         onChange={this.changeQueryString} />
+                    <Router>
+                            <Link
+                            to='/create'
+                            className='add-contact'>
+                            Add Contact
+                            </Link>
+                    </Router>
                 </div>
 
                 {showingContacts.length !== contacts.length && (
@@ -57,7 +85,7 @@ class ListContacts extends Component {
                                 <p>{contact.handle}</p>
                             </div>
                             <button
-                                onClick={() => onRemoveContact(contact)}
+                                onClick={() => this.onRemoveContact(contact)}
                                 className='contact-remove'></button>
                         </li>
                     )
