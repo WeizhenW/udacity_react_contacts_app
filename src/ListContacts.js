@@ -31,10 +31,20 @@ class ListContacts extends Component {
     }
 
     onRemoveContact = (contact) => {
-        const newContactsList = this.state.contacts.filter(c => c.id !== contact.id);
-        this.setState({
-          contacts: newContactsList
-        });
+        ContactAPI.remove(contact).then(
+            () => {
+                ContactAPI.getAll().then(
+                    (newContacts) => {
+                        this.setState({
+                            contacts: newContacts
+                        })                        
+                    });
+            }
+        )
+        // const newContactsList = this.state.contacts.filter(c => c.id !== contact.id);
+        // this.setState({
+        //   contacts: newContactsList
+        // });
       }
 
     render() {
